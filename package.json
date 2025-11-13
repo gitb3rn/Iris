@@ -1,0 +1,24 @@
+{
+  "name": "iris",
+  "version": "0.1.0",
+  "description": "URL classification microservice for content routing",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["cloudflare", "workers", "url-classifier"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "wrangler": "^4.28.0"
+  }
+}

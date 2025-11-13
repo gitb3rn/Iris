@@ -1,0 +1,6 @@
+name = "iris"
+main = "src/index.ts"
+compatibility_date = "2025-11-07"
+
+[env.production]
+name = "iris"

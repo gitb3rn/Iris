@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iris intelligent URL classification service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #F2ECE7;
+            color: #041c2c;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #085FA1;
+            color: #ffffff;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 400;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #ffffff;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(4, 28, 44, 0.1);
+        }
+
+        h2 {
+            color: #085FA1;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .env-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .env-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .env-toggle input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #041c2c;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #085FA1;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: Helvetica, Arial, sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #041c2c;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: Helvetica, Arial, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #085FA1;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #041c2c;
+        }
+
+        .btn-secondary {
+            background-color: #F2ECE7;
+            color: #041c2c;
+            border: 2px solid #085FA1;
+        }
+
+        .btn-secondary:hover {
+            background-color: #085FA1;
+            color: #ffffff;
+        }
+
+        .btn-success {
+            background-color: #188838;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background-color: #0d5a23;
+        }
+
+        .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .example-btn {
+            text-align: left;
+            padding: 0.75rem;
+            background-color: #F2ECE7;
+            border: 1px solid #085FA1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .example-btn:hover {
+            background-color: #085FA1;
+            color: #ffffff;
+        }
+
+        .response-container {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .response-container.visible {
+            display: block;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background-color: #041c2c;
+            color: #F2ECE7;
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .error {
+            background-color: #ffe6e6;
+            border-left: 4px solid #c41e3a;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .success {
+            background-color: #e6f4ea;
+            border-left: 4px solid #188838;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .loading {
+            display: none;
+            color: #085FA1;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .mappings-section {
+            margin-top: 2rem;
+        }
+
+        .mappings-toggle {
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #F2ECE7;
+            border: 2px solid #085FA1;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .mappings-toggle:hover {
+            background-color: #085FA1;
+            color: #ffffff;
+        }
+
+        .mappings-toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .mappings-toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .mappings-content {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .mappings-content.visible {
+            display: block;
+        }
+
+        .mappings-header {
+            background-color: #085FA1;
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 4px 4px 0 0;
+            font-weight: 500;
+        }
+
+        .mapping-item {
+            border: 1px solid #085FA1;
+            border-top: none;
+            padding: 1rem;
+            background-color: #ffffff;
+        }
+
+        .mapping-item:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+
+        .mapping-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-type {
+            background-color: #085FA1;
+            color: #ffffff;
+        }
+
+        .badge-api {
+            background-color: #188838;
+            color: #ffffff;
+        }
+
+        .badge-scrape {
+            background-color: #F2ECE7;
+            color: #041c2c;
+            border: 1px solid #085FA1;
+        }
+
+        .badge-contains {
+            background-color: #041c2c;
+            color: #ffffff;
+        }
+
+        .mapping-pattern {
+            font-family: 'Courier New', monospace;
+            background-color: #F2ECE7;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        .mapping-description {
+            color: #041c2c;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .mappings-stats {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem;
+            background-color: #F2ECE7;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #085FA1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #041c2c;
+            opacity: 0.8;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #085FA1;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .container {
+                padding: 0 1rem 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>IRIS</h1>
+            <span class="subtitle">intelligent URL classification service</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Test</h2>
+            
+            <div class="env-toggle">
+                <label>
+                    <input type="radio" name="environment" value="local" checked>
+                    Local (127.0.0.1:8787)
+                </label>
+                <label>
+                    <input type="radio" name="environment" value="production">
+                    Production
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="urlInput">Enter URL to classify</label>
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    placeholder="https://whatson.cityofsydney.nsw.gov.au/events/example-event"
+                >
+            </div>
+
+            <div class="examples">
+                <small style="opacity: 0.7; margin-bottom: 0.5rem;">Try these examples:</small>
+                <button class="example-btn" data-url="https://whatson.cityofsydney.nsw.gov.au/events/chin-chin-exclusive-new-years-eve-burlesque-show-and-dinner">
+                    https://whatson.cityofsydney.nsw.gov.au/events/chin-chin-exclusive-new-years-eve-burlesque-show-and-dinner
+                </button>
+                <button class="example-btn" data-url="https://example.com/unknown-page">
+                    https://example.com/unknown-page
+                </button>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" id="classifyBtn">Classify URL</button>
+                <button class="btn-secondary" id="clearBtn">Clear</button>
+            </div>
+
+            <div class="loading" id="loading">Classifying...</div>
+
+            <div class="response-container" id="responseContainer">
+                <div class="response-header">
+                    <h2>Response</h2>
+                    <button class="btn-success" id="copyBtn">Copy JSON</button>
+                </div>
+                <pre id="responseOutput"></pre>
+            </div>
+        </div>
+
+        <div class="card mappings-section">
+            <div class="mappings-toggle" id="mappingsToggle">
+                <h2 style="margin: 0;">URL Mappings Reference</h2>
+                <span class="mappings-toggle-icon">▼</span>
+            </div>
+            <div class="mappings-content" id="mappingsContent">
+                <div class="mappings-stats" id="mappingsStats"></div>
+                <div id="mappingsList"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Iris intelligent URL classification service</p>
+        </footer>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const classifyBtn = document.getElementById('classifyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const loading = document.getElementById('loading');
+        const responseContainer = document.getElementById('responseContainer');
+        const responseOutput = document.getElementById('responseOutput');
+        const envRadios = document.querySelectorAll('input[name="environment"]');
+        const exampleBtns = document.querySelectorAll('.example-btn');
+
+        let currentEndpoint = 'http://127.0.0.1:8787/classify';
+
+        // Environment toggle
+        envRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'local') {
+                    currentEndpoint = 'http://127.0.0.1:8787/classify';
+                } else {
+                    currentEndpoint = 'https://iris.your-domain.workers.dev/classify';
+                }
+            });
+        });
+
+        // Example buttons
+        exampleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                urlInput.value = btn.dataset.url;
+                urlInput.focus();
+            });
+        });
+
+        // Classify button
+        classifyBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            loading.classList.add('visible');
+            responseContainer.classList.remove('visible');
+            responseOutput.textContent = '';
+
+            try {
+                const response = await fetch(currentEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                const data = await response.json();
+                loading.classList.remove('visible');
+                responseContainer.classList.add('visible');
+                responseOutput.textContent = JSON.stringify(data, null, 2);
+
+                if (!response.ok) {
+                    showError(`Error ${response.status}: ${data.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                loading.classList.remove('visible');
+                showError(`Network error: ${error.message}. Make sure the server is running.`);
+            }
+        });
+
+        // Clear button
+        clearBtn.addEventListener('click', () => {
+            urlInput.value = '';
+            responseContainer.classList.remove('visible');
+            responseOutput.textContent = '';
+            urlInput.focus();
+        });
+
+        // Copy button
+        copyBtn.addEventListener('click', () => {
+            const text = responseOutput.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            });
+        });
+
+        // Enter key to classify
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                classifyBtn.click();
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const existing = document.querySelector('.error, .success');
+            if (existing) {
+                existing.remove();
+            }
+            
+            responseContainer.insertAdjacentElement('afterend', errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // Mappings functionality
+        const mappingsToggle = document.getElementById('mappingsToggle');
+        const mappingsContent = document.getElementById('mappingsContent');
+        const mappingsStats = document.getElementById('mappingsStats');
+        const mappingsList = document.getElementById('mappingsList');
+        const toggleIcon = document.querySelector('.mappings-toggle-icon');
+
+        let mappingsLoaded = false;
+
+        mappingsToggle.addEventListener('click', async () => {
+            const isOpen = mappingsContent.classList.contains('visible');
+            
+            if (isOpen) {
+                mappingsContent.classList.remove('visible');
+                toggleIcon.classList.remove('open');
+            } else {
+                mappingsContent.classList.add('visible');
+                toggleIcon.classList.add('open');
+                
+                if (!mappingsLoaded) {
+                    await loadMappings();
+                }
+            }
+        });
+
+        async function loadMappings() {
+            try {
+                const endpoint = currentEndpoint.replace('/classify', '/mappings');
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                displayMappings(data);
+                mappingsLoaded = true;
+            } catch (error) {
+                mappingsList.innerHTML = '<div class="error">Failed to load mappings: ' + error.message + '</div>';
+            }
+        }
+
+        function displayMappings(data) {
+            const apiCount = data.mappings.filter(m => m.hasApiEndpoint).length;
+            const scrapeCount = data.total - apiCount;
+            
+            mappingsStats.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-value">${data.total}</span>
+                    <span class="stat-label">Total Mappings</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${apiCount}</span>
+                    <span class="stat-label">API Endpoints</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${scrapeCount}</span>
+                    <span class="stat-label">Scrape Only</span>
+                </div>
+            `;
+
+            let html = '<div class="mappings-header">All URL Patterns</div>';
+            
+            data.mappings.forEach(mapping => {
+                const methodBadge = mapping.hasApiEndpoint 
+                    ? '<span class="badge badge-api">API</span>'
+                    : '<span class="badge badge-scrape">SCRAPE</span>';
+                
+                const containsBadge = mapping.containsType 
+                    ? `<span class="badge badge-contains">Contains: ${mapping.containsType}</span>`
+                    : '';
+                
+                html += `
+                    <div class="mapping-item">
+                        <div class="mapping-meta">
+                            <span class="badge badge-type">${mapping.type}</span>
+                            ${methodBadge}
+                            ${containsBadge}
+                        </div>
+                        <div class="mapping-description">${mapping.description}</div>
+                        <div class="mapping-pattern">${escapeHtml(mapping.pattern)}</div>
+                    </div>
+                `;
+            });
+            
+            mappingsList.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
