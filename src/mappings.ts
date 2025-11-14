@@ -110,7 +110,7 @@ export const urlMappings: UrlMapping[] = [
 
   // SERVICE patterns
   {
-    pattern: /^https?:\/\/www\.cityofsydney\.nsw\.gov\.au\/(building-certification|business-permits-approvals-and-tenders|childrens-services|construction-permits-and-approvals|development-applications|hoardings-and-temporary-structure-approvals|library-information-services|outdoor-events-filming|pet-and-animal-services|property-and-tree-maintenance|public-domain-works|rates|report-an-issue|sports-facility-booking-services|transport-and-parking|waste-and-recycling-services)\/([^\/]+)/,
+    pattern: /^https?:\/\/www\.cityofsydney\.nsw\.gov\.au\/(building-certification|business-permits-approvals-and-tenders|childrens-services|construction-permits-and-approvals|development-applications|hoardings-and-temporary-structure-approvals|library-information-services|outdoor-events-filming|pet-and-animal-services|property-and-tree-maintenance|public-domain-works|rates|report-an-issue|sports-facility-booking-services|transport-and-parking|waste-recycling-services)\/([^\/]+)/,
     type: 'SERVICE',
     description: 'City services',
   },
@@ -184,7 +184,7 @@ export const urlMappings: UrlMapping[] = [
 
   // CATEGORY (SERVICE)
   {
-    pattern: /^https?:\/\/www\.cityofsydney\.nsw\.gov\.au\/(building-certification|business-permits-approvals-and-tenders|childrens-services|construction-permits-and-approvals|development-applications|hoardings-and-temporary-structure-approvals|library-information-services|outdoor-events-filming|pet-and-animal-services|property-and-tree-maintenance|public-domain-works|rates|report-an-issue|sports-facility-booking-services|transport-and-parking|waste-and-recycling-services)\/?$/,
+    pattern: /^https?:\/\/www\.cityofsydney\.nsw\.gov\.au\/(building-certification|business-permits-approvals-and-tenders|childrens-services|construction-permits-and-approvals|development-applications|hoardings-and-temporary-structure-approvals|library-information-services|outdoor-events-filming|pet-and-animal-services|property-and-tree-maintenance|public-domain-works|rates|report-an-issue|sports-facility-booking-services|transport-and-parking|waste-recycling-services)\/?$/,
     type: 'CATEGORY',
     containsType: 'SERVICE',
     description: 'Service category listings',

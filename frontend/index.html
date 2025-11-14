@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iris intelligent URL classification service</title>
+    <title>Iris - intelligent resource identification service</title>
     <style>
         * {
             margin: 0;
@@ -253,6 +253,9 @@
 
         .mappings-toggle:hover {
             background-color: #085FA1;
+        }
+
+        .mappings-toggle:hover h2 {
             color: #ffffff;
         }
 
@@ -371,6 +374,22 @@
             opacity: 0.8;
         }
 
+        .card p {
+            margin-bottom: 1rem;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        code {
+            background-color: #F2ECE7;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
         footer {
             text-align: center;
             margin-top: 3rem;
@@ -404,25 +423,14 @@
 <body>
     <header>
         <div class="header-content">
-            <h1>IRIS</h1>
-            <span class="subtitle">intelligent URL classification service</span>
+            <h1>Iris</h1>
+            <span class="subtitle">intelligent resource identification service</span>
         </div>
     </header>
 
     <div class="container">
         <div class="card">
             <h2>Test</h2>
-            
-            <div class="env-toggle">
-                <label>
-                    <input type="radio" name="environment" value="local" checked>
-                    Local (127.0.0.1:8787)
-                </label>
-                <label>
-                    <input type="radio" name="environment" value="production">
-                    Production
-                </label>
-            </div>
 
             <div class="form-group">
                 <label for="urlInput">Enter URL to classify</label>
@@ -438,8 +446,11 @@
                 <button class="example-btn" data-url="https://whatson.cityofsydney.nsw.gov.au/events/chin-chin-exclusive-new-years-eve-burlesque-show-and-dinner">
                     https://whatson.cityofsydney.nsw.gov.au/events/chin-chin-exclusive-new-years-eve-burlesque-show-and-dinner
                 </button>
-                <button class="example-btn" data-url="https://example.com/unknown-page">
-                    https://example.com/unknown-page
+                <button class="example-btn" data-url="https://www.cityofsydney.nsw.gov.au/waste-recycling-services/find-my-bin-collection-day">
+                    https://www.cityofsydney.nsw.gov.au/waste-recycling-services/find-my-bin-collection-day
+                </button>
+                <button class="example-btn" data-url="https://en.wikipedia.org/wiki/Porcellino">
+                    https://en.wikipedia.org/wiki/Porcellino
                 </button>
             </div>
 
@@ -461,7 +472,7 @@
 
         <div class="card mappings-section">
             <div class="mappings-toggle" id="mappingsToggle">
-                <h2 style="margin: 0;">URL Mappings Reference</h2>
+                <h2 style="margin: 0;">URL mappings reference</h2>
                 <span class="mappings-toggle-icon">▼</span>
             </div>
             <div class="mappings-content" id="mappingsContent">
@@ -470,8 +481,19 @@
             </div>
         </div>
 
+        <div class="card">
+            <h2>About</h2>
+            <p>Iris analyses URLs from City of Sydney and third-party websites and determines the best way to retrieve their content. For each URL, it identifies the content type (event, article, service, project, publication, program, committee, place, space, attraction, collection, focus, media, category, or generic) and recommends either using an available API endpoint or web scraping. This helps downstream systems make informed decisions about data collection methods and expected content structures.</p>
+            
+            <p>The category content type is used for list or collection pages that contain multiple items of a specific type. When Iris identifies a category page, it includes a <code>contains_type</code> field in the response to indicate what type of content the list contains (e.g., a category page containing events will have <code>contains_type: "EVENT"</code>).</p>
+            
+            <p>Once Iris classifies a URL, consuming applications use the response to determine their next steps. The <code>type</code> field maps to the application's own data schema definitions, the <code>action.method</code> indicates whether to call an API or scrape the page, and the <code>action.endpoint</code> (when present) provides the exact API URL to use. This separation of concerns means Iris handles routing intelligence while applications manage their own data structures and validation logic.</p>
+            
+            <p>Iris is built as a serverless microservice using Cloudflare Workers for global edge deployment, Hono framework for lightweight routing, and TypeScript for type safety. The service currently handles 168 URL patterns across City of Sydney domains, with dynamic API endpoint construction using regex capture groups for flexible URL matching.</p>
+        </div>
+
         <footer>
-            <p>Iris intelligent URL classification service</p>
+            <p>Iris &middot; intelligent resource identification service &middot; prototype</p>
         </footer>
     </div>
 
@@ -483,21 +505,9 @@
         const loading = document.getElementById('loading');
         const responseContainer = document.getElementById('responseContainer');
         const responseOutput = document.getElementById('responseOutput');
-        const envRadios = document.querySelectorAll('input[name="environment"]');
         const exampleBtns = document.querySelectorAll('.example-btn');
 
-        let currentEndpoint = 'http://127.0.0.1:8787/classify';
-
-        // Environment toggle
-        envRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                if (e.target.value === 'local') {
-                    currentEndpoint = 'http://127.0.0.1:8787/classify';
-                } else {
-                    currentEndpoint = 'https://iris.your-domain.workers.dev/classify';
-                }
-            });
-        });
+        const currentEndpoint = 'https://iris.binbot.workers.dev/classify';
 
         // Example buttons
         exampleBtns.forEach(btn => {
